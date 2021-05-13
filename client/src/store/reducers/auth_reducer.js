@@ -40,26 +40,6 @@ const AuthReducer = (state = initialState, action) => {
         ...state,
         db_profile: null,
       };
-    case ACTION_TYPES.FETCH_DB_POSTS:
-      return {
-        ...state,
-        db_posts: action.payload,
-      };
-    case ACTION_TYPES.REMOVE_DB_POSTS:
-      return {
-        ...state,
-        db_posts: null,
-      };
-    case ACTION_TYPES.FETCH_POST_COMMENTS:
-      return {
-        ...state,
-        post_comments: action.payload,
-      };
-    case ACTION_TYPES.REMOVE_POST_COMMENTS:
-      return {
-        ...state,
-        post_comments: null,
-      };
     default:
       return state;
   }
