@@ -43,8 +43,8 @@ router.put("/api/put/post", (req, res, next) => {
               WHERE pid=$4`,
     values,
     (q_err, q_res) => {
+      if (q_err) return next(q_err);
       res.json(q_res.rows);
-      console.log(q_err);
     }
   );
 });
@@ -56,8 +56,8 @@ router.delete("/api/delete/postcomments", (req, res, next) => {
               WHERE post_id = $1`,
     [post_id],
     (q_err, q_res) => {
+      if (q_err) return next(q_err);
       res.json(q_res.rows);
-      console.log(q_err);
     }
   );
 });
@@ -69,8 +69,8 @@ router.delete("/api/delete/post", (req, res, next) => {
               WHERE pid = $1`,
     [post_id],
     (q_err, q_res) => {
+      if (q_err) return next(q_err);
       res.json(q_res.rows);
-      console.log(q_err);
     }
   );
 });
