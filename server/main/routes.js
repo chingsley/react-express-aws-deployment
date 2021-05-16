@@ -143,4 +143,54 @@ router.get("/api/get/allpostcomments", (req, res, next) => {
     }
   );
 });
+
+/**
+ * USER PROFILE SECTION
+ */
+router.post("/api/post/userprofiletodb", (req, res, next) => {
+  const { nickname, email, email_verified } = req.body.profile;
+  const values = [nickname, email, email_verified];
+  pool.query(
+    `
+  INSERT INTO users(username, email, email_verified, date_created)
+  VALUES($1, $2, $3, NOW())
+  ON CONFLICT DO NOTHING
+  `,
+    values,
+    (q_err, q_res) => {
+      if (q_err) return next(q_err);
+      res.json(q_res.rows);
+    }
+  );
+});
+
+router.get("/api/get/userprofile", (req, res, next) => {
+  const email = String(req.body.email);
+  pool.query(
+    `
+  SELECT * FROM users
+  WHERE email = $1
+  `,
+    [email],
+    (qErr, qRes) => {
+      if (qErr) return next(qErr);
+      res.json(qRes.rows);
+    }
+  );
+});
+
+router.get("/api/get/userposts", (req, res, next) => {
+  const email = req.body.user_id;
+  pool.query(
+    `
+  SELECT * FROM posts
+  WHERE user_id = $1
+  `,
+    [user_id],
+    (qErr, qRes) => {
+      if (qErr) return next(qErr);
+      res.json(qRes.rows);
+    }
+  );
+});
 module.exports = router;
