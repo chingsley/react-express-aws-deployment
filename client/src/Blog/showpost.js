@@ -41,12 +41,65 @@ class ShowPost extends Component {
     };
   }
 
+  componentDidMount() {
+    axios
+      .get("/api/get/allpostcomments", {
+        params: { post_id: this.props.location.state.post.post.pid },
+      })
+      .then((res) => this.props.set_comments(res.data))
+      .catch((err) => console.log(err));
+  }
+
   handleClickOpen = (cid, comment) =>
     this.setState({ open: true, comment: comment, cid: cid });
 
   handleClose = () => this.setState({ open: false, comment: "", cid: "" });
 
-  handleCommentChange = () => this.setState({ comment: event.target.value });
+  handleCommentChange = (event) =>
+    this.setState({ comment: event.target.value });
+
+  handleSubmit = (event) => {
+    event.preventDefault();
+    const user_id = this.props.db_profile[0].uid;
+    const post_id = this.props.location.state.post.post.post_id;
+    const username = this.props.db_profile[0].username;
+    const data = {
+      comment: event.target.comment.value,
+      post_id,
+      user_id,
+      username,
+    };
+
+    axios
+      .post("/api/post/commenttodb", data)
+      .then((res) => console.log(res))
+      .catch((err) => console.log(err))
+      .then(setTimeout(() => history.replace("/posts"), 700));
+  };
+
+  handleUpdate = () => {
+    const comment = this.state.comments;
+    const cid = this.state.cid;
+    const user_id = this.props.db_profile[0].uid;
+    const post_id = this.props.location.state.post.post.post_id;
+    const username = this.props.db_profile[0].username;
+
+    const data = { cid, comment, post_id, user_id, username };
+    axios
+      .post("/api/put/commenttodb", data)
+      .then((res) => console.log(res))
+      .catch((err) => console.log(err))
+      .then(setTimeout(() => history.replace("/posts"), 700));
+  };
+
+  handleDeleteComment = () => {
+    const cid = this.state.cid;
+    axios
+      .delete("/api/delete/comment", { data: { cid } })
+      .then((res) => console.log(res))
+      .catch((err) => console.log(err))
+      .then(setTimeout(() => history.replace("/posts"), 700));
+  };
 
   render() {
     return (
@@ -122,7 +175,9 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return {};
+  return {
+    set_comments: (comments) => dispatch(ACTIONS.fetch_post_comments(comments)),
+  };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(ShowPost);
